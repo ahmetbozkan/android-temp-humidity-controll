@@ -8,33 +8,36 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.thesisproject.data.BtServiceRepository;
+import com.example.thesisproject.data.WarningRepository;
 
 import java.util.UUID;
 
 public class ServiceViewModel extends AndroidViewModel {
 
-    private final BtServiceRepository repository;
+    private final BtServiceRepository btServiceRepository;
 
     private final MutableLiveData<String> mIncomingMessage;
     private final MutableLiveData<Boolean> mIsConnecting;
     private final MutableLiveData<Boolean> mIsConnected;
 
+    private final WarningRepository warningRepository;
 
     public ServiceViewModel(@NonNull Application application) {
         super(application);
-        repository = BtServiceRepository.getRepositoryInstance(application);
+        btServiceRepository = BtServiceRepository.getRepositoryInstance(application);
+        warningRepository = WarningRepository.getRepositoryInstance(application);
 
-        mIncomingMessage = repository.getmIncomingData();
-        mIsConnecting = repository.getmIsConnecting();
-        mIsConnected = repository.getmIsConnected();
+        mIncomingMessage = btServiceRepository.getmIncomingData();
+        mIsConnecting = btServiceRepository.getmIsConnecting();
+        mIsConnected = btServiceRepository.getmIsConnected();
     }
 
     public void connect() {
-        repository.start();
+        btServiceRepository.start();
     }
 
     public void startClient(BluetoothDevice device, UUID uuid) {
-        repository.startClient(device, uuid);
+        btServiceRepository.startClient(device, uuid);
     }
 
     public MutableLiveData<String> getmIncomingMessage() {
@@ -50,6 +53,22 @@ public class ServiceViewModel extends AndroidViewModel {
     }
 
     public void setIsConnecting(Boolean value) {
-        repository.setIsConnecting(value);
+        btServiceRepository.setIsConnecting(value);
+    }
+
+    public void setTempWarning(float temp) {
+        warningRepository.setTempWarning(temp);
+    }
+
+    public float getTempWarning() {
+        return warningRepository.getTempWarning();
+    }
+
+    public void setHumWarning(float temp) {
+        warningRepository.setHumWarning(temp);
+    }
+
+    public float getHumWarning() {
+        return warningRepository.getHumWarning();
     }
 }

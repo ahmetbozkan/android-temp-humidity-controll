@@ -73,16 +73,13 @@ public class BtServiceRepository {
 
     private class AcceptThread extends Thread {
 
-        // The local server socket
         private final BluetoothServerSocket mmServerSocket;
 
         public AcceptThread() {
             BluetoothServerSocket tmp = null;
 
-            // Create a new listening server socket
             try {
                 tmp = mBluetoothAdapter.listenUsingInsecureRfcommWithServiceRecord(appName, MY_UUID_INSECURE);
-
                 Log.d(TAG, "AcceptThread: Setting up Server using: " + MY_UUID_INSECURE);
             } catch (IOException e) {
                 Log.e(TAG, "AcceptThread: IOException: " + e.getMessage());
@@ -97,8 +94,6 @@ public class BtServiceRepository {
             BluetoothSocket socket = null;
 
             try {
-                // This is a blocking call and will only return on a
-                // successful connection or an exception
                 Log.d(TAG, "run: RFCOM server socket start.....");
 
                 socket = mmServerSocket.accept();
@@ -109,7 +104,7 @@ public class BtServiceRepository {
                 Log.e(TAG, "AcceptThread: IOException: " + e.getMessage());
             }
 
-            //talk about this is in the 3rd
+
             if (socket != null) {
                 connected(socket, mmDevice);
             }
@@ -127,11 +122,6 @@ public class BtServiceRepository {
         }
     }
 
-    /**
-     * This thread runs while attempting to make an outgoing connection
-     * with a device. It runs straight through; the connection either
-     * succeeds or fails.
-     */
     private class ConnectThread extends Thread {
         private BluetoothSocket mmSocket;
 
@@ -186,10 +176,6 @@ public class BtServiceRepository {
         }
     }
 
-    /**
-     * Start the chat service. Specifically start AcceptThread to begin a
-     * session in listening (server) mode. Called by the Activity onResume()
-     */
     public synchronized void start() {
         Log.d(TAG, "start");
 
@@ -204,10 +190,7 @@ public class BtServiceRepository {
         }
     }
 
-    /**
-     * AcceptThread starts and sits waiting for a connection.
-     * Then ConnectThread starts and attempts to make a connection with the other devices AcceptThread.
-     **/
+
     public void startClient(BluetoothDevice device, UUID uuid) {
         Log.d(TAG, "startClient: Started.");
 
@@ -217,10 +200,7 @@ public class BtServiceRepository {
         mConnectThread.start();
     }
 
-    /**
-     * Finally the ConnectedThread which is responsible for maintaining the BTConnection, Sending the data, and
-     * receiving incoming data through input/output streams respectively.
-     **/
+
     private class ConnectedThread extends Thread {
         private final BluetoothSocket mmSocket;
         private final InputStream mmInStream;
@@ -265,7 +245,9 @@ public class BtServiceRepository {
                     mIncomingData.postValue(incomingMessage);
 
                     Log.d(TAG, "InputStream: " + incomingMessage);
+
                     Thread.sleep(3000);
+
                 } catch (IOException e) {
                     Log.e(TAG, "write: Error reading Input Stream. " + e.getMessage());
                     break;
@@ -275,7 +257,6 @@ public class BtServiceRepository {
             }
         }
 
-        //Call this from the main activity to send data to the remote device
         public void write(byte[] bytes) {
             String text = new String(bytes, Charset.defaultCharset());
             Log.d(TAG, "write: Writing to outputstream: " + text);
@@ -286,7 +267,6 @@ public class BtServiceRepository {
             }
         }
 
-        /* Call this from the main activity to shutdown the connection */
         public void cancel() {
             try {
                 mmSocket.close();

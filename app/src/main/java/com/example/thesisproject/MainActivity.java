@@ -27,9 +27,7 @@ public class MainActivity extends AppCompatActivity {
         assert hostFragment != null;
         navController = NavHostFragment.findNavController(hostFragment);
 
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        NavigationUI.setupWithNavController(toolbar, navController);
+
     }
 
     @Override
