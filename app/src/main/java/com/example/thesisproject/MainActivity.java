@@ -21,13 +21,19 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        AppBarConfiguration appBarConfiguration = new AppBarConfiguration
+                .Builder(R.id.loginFragment, R.id.monitoringFragment)
+                .build();
+
         NavHostFragment hostFragment = (NavHostFragment)
                 getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
 
         assert hostFragment != null;
         navController = NavHostFragment.findNavController(hostFragment);
 
-
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
     }
 
     @Override

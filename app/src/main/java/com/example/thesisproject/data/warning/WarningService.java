@@ -1,4 +1,4 @@
-package com.example.thesisproject.data;
+package com.example.thesisproject.data.warning;
 
 public interface WarningService {
 

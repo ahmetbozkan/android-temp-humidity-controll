@@ -7,8 +7,7 @@ import android.os.IBinder;
 
 import androidx.annotation.Nullable;
 
-import com.example.thesisproject.data.BtServiceRepository;
-import com.example.thesisproject.ui.ServiceViewModel;
+import com.example.thesisproject.data.connection.BtServiceRepository;
 
 import java.util.UUID;
 
@@ -27,8 +26,7 @@ public class BtConnectionService extends Service {
 
     @Override
     public void onCreate() {
-        repository = BtServiceRepository
-                .getRepositoryInstance(getApplication());
+        repository = BtServiceRepository.getRepositoryInstance(getApplication());
     }
 
     @Override

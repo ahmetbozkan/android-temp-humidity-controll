@@ -41,9 +41,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:textSize="12sp"
                 android:text="Temperature\nWarning"
-                android:textColor="#393737" />
+                android:textColor="#393737"
+                android:textSize="12sp" />
 
         </LinearLayout>
 
@@ -70,6 +70,17 @@
         android:src="@drawable/ic_add"
         app:layout_constraintStart_toEndOf="@+id/cardView"
         app:layout_constraintTop_toTopOf="@+id/cardView" />
+
+    <ImageButton
+        android:id="@+id/btn_set_temperature_warning_type"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:background="@android:color/transparent"
+        app:layout_constraintBottom_toBottomOf="@+id/cardView"
+        app:layout_constraintStart_toEndOf="@+id/cardView"
+        app:layout_constraintTop_toTopOf="@+id/cardView"
+        tools:src="@drawable/ic_down" />
 
     <ImageButton
         android:id="@+id/btn_decrease_warning_temp"
@@ -115,9 +126,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:textSize="12sp"
                 android:text="Humidity\nWarning"
-                android:textColor="#393737" />
+                android:textColor="#393737"
+                android:textSize="12sp" />
 
         </LinearLayout>
 
@@ -144,6 +155,17 @@
         android:src="@drawable/ic_add"
         app:layout_constraintEnd_toStartOf="@+id/cardView2"
         app:layout_constraintTop_toTopOf="@+id/cardView2" />
+
+    <ImageButton
+        android:id="@+id/btn_set_humidity_warning_type"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="4dp"
+        android:background="@android:color/transparent"
+        app:layout_constraintBottom_toBottomOf="@+id/cardView2"
+        app:layout_constraintEnd_toStartOf="@+id/cardView2"
+        app:layout_constraintTop_toTopOf="@+id/cardView2"
+        tools:src="@drawable/ic_down" />
 
     <ImageButton
         android:id="@+id/btn_decrease_warning_hum"
@@ -190,10 +212,10 @@
                     android:id="@+id/tv_temperature"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    tools:text="25°C"
                     android:text="0°C"
                     android:textColor="@color/black"
-                    android:textSize="36sp" />
+                    android:textSize="36sp"
+                    tools:text="25°C" />
 
                 <TextView
                     android:id="@+id/textView3"
@@ -204,6 +226,15 @@
             </LinearLayout>
 
         </androidx.cardview.widget.CardView>
+
+        <Button
+            android:id="@+id/btn_display_temp_overflows"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="40dp"
+            android:layout_marginTop="70dp"
+            android:layout_toEndOf="@id/view_temp"
+            android:text="Display\nOverflows" />
 
         <androidx.cardview.widget.CardView
             android:id="@+id/view_humidity"
@@ -235,10 +266,10 @@
                     android:id="@+id/tv_humidity"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    tools:text="40%"
                     android:text="0%"
                     android:textColor="@color/black"
-                    android:textSize="36sp" />
+                    android:textSize="36sp"
+                    tools:text="40%" />
 
                 <TextView
                     android:id="@+id/textView4"
@@ -249,6 +280,15 @@
             </LinearLayout>
 
         </androidx.cardview.widget.CardView>
+
+        <Button
+            android:id="@+id/btn_display_hum_overflows"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="250dp"
+            android:layout_marginEnd="40dp"
+            android:layout_toStartOf="@id/view_humidity"
+            android:text="Display\nOverflows" />
 
 
     </RelativeLayout>

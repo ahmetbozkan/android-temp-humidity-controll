@@ -18,5 +18,48 @@
         android:id="@+id/monitoringFragment"
         android:name="com.example.thesisproject.ui.MonitoringFragment"
         android:label="fragment_monitoring"
-        tools:layout="@layout/fragment_monitoring" />
+        tools:layout="@layout/fragment_monitoring" >
+        <action
+            android:id="@+id/action_monitoringFragment_to_warningHumiditiesFragment2"
+            app:destination="@id/warningHumiditiesFragment2" />
+        <action
+            android:id="@+id/action_monitoringFragment_to_warningTemperaturesFragment2"
+            app:destination="@id/warningTemperaturesFragment2" />
+    </fragment>
+    <fragment
+        android:id="@+id/warningHumiditiesFragment2"
+        android:name="com.example.thesisproject.ui.WarningHumiditiesFragment"
+        android:label="fragment_warning_humidities"
+        tools:layout="@layout/fragment_warning_humidities" >
+        <action
+            android:id="@+id/action_warningHumiditiesFragment2_to_warningHumidityDetailsFragment"
+            app:destination="@id/warningHumidityDetailsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/warningTemperaturesFragment2"
+        android:name="com.example.thesisproject.ui.WarningTemperaturesFragment"
+        android:label="fragment_warning_temperatures"
+        tools:layout="@layout/fragment_warning_temperatures" >
+        <action
+            android:id="@+id/action_warningTemperaturesFragment2_to_warningTempDetailsFragment"
+            app:destination="@id/warningTempDetailsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/warningTempDetailsFragment"
+        android:name="com.example.thesisproject.ui.WarningTempDetailsFragment"
+        android:label="fragment_warning_temp_details"
+        tools:layout="@layout/fragment_warning_temp_details" >
+        <argument
+            android:name="temperature"
+            app:argType="com.example.thesisproject.data.model.Temperature" />
+    </fragment>
+    <fragment
+        android:id="@+id/warningHumidityDetailsFragment"
+        android:name="com.example.thesisproject.ui.WarningHumidityDetailsFragment"
+        android:label="fragment_warning_humidity_details"
+        tools:layout="@layout/fragment_warning_humidity_details" >
+        <argument
+            android:name="humidity"
+            app:argType="com.example.thesisproject.data.model.Humidity" />
+    </fragment>
 </navigation>

@@ -5,6 +5,7 @@ import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
@@ -20,26 +21,20 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavDirections;
+import androidx.navigation.Navigation;
+import androidx.navigation.ui.NavigationUI;
 
 import com.example.thesisproject.R;
+import com.example.thesisproject.service.NotificationService;
 
 public class MonitoringFragment extends Fragment {
     private static final String TAG = "MonitoringFragment";
 
     private ServiceViewModel serviceViewModel;
-
-    private static final String TEMPERATURE_CHANNEL_ID = "warning_temp_notification_id";
-    private static final String TEMPERATURE_CHANNEL_NAME = "warning_temp_notification_name";
-    private static final int TEMPERATURE_NOTIFICATION_ID = 0;
-    private Notification temperatureNotification;
-    private NotificationManagerCompat notificationManagerCompat;
-
-    private static final String HUMIDITY_CHANNEL_ID = "warning_hum_notification_id";
-    private static final String HUMIDITY_CHANNEL_NAME = "warning_hum_notification_name";
-    private static final int HUMIDITY_NOTIFICATION_ID = 1;
-    private Notification humidityNotification;
 
     private TextView tv_temperature;
     private TextView tv_humidity;
@@ -51,6 +46,14 @@ public class MonitoringFragment extends Fragment {
     private ImageButton btn_decreaseWarningTemp;
     private ImageButton btn_increaseWarningHum;
     private ImageButton btn_decreaseWarningHum;
+    private ImageButton btn_setTempWarningType;
+    private ImageButton btn_setHumWarningType;
+
+    private String currentTemperatureWarningType;
+    private String temporaryTemperatureWarningType;
+
+    private String currentHumidityWarningType;
+    private String temporaryHumidityWarningType;
 
     private Button btn_saveWarningTemp;
     private Button btn_saveWarningHum;
@@ -65,6 +68,9 @@ public class MonitoringFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        Intent intent = new Intent(requireContext(), NotificationService.class);
+        requireActivity().startService(intent);
 
         serviceViewModel.getmIncomingMessage().observe(getViewLifecycleOwner(), incomingMessage -> {
             if (incomingMessage != null) {
@@ -82,8 +88,10 @@ public class MonitoringFragment extends Fragment {
                             tv_temperature.setText(temp + "°C");
                             tv_humidity.setText(hum + "%");
 
-                            setTemperatureOverflowActions(currentWarningTemp, floatTemp);
-                            setHumidityOverflowActions(currentWarningHum, floatHum);
+                            if(currentWarningTemp < floatTemp || currentWarningHum < floatHum) {
+                                setTemperatureOverflowActions(currentWarningTemp, floatTemp);
+                                setHumidityOverflowActions(currentWarningHum, floatHum);
+                            }
 
                             Log.d(TAG, "onViewCreated: Float Temp: " + floatTemp +
                                     "\nHum Temp: " + floatHum);
@@ -104,18 +112,14 @@ public class MonitoringFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_monitoring, container, false);
         init(v);
-        createTemperatureNotificationChannel();
-        createHumidityNotificationChannel();
-
-        notificationManagerCompat = NotificationManagerCompat.from(requireContext());
 
         serviceViewModel = new ViewModelProvider(requireActivity())
                 .get(ServiceViewModel.class);
 
-
         currentWarningTemp = serviceViewModel.getTempWarning();
         tv_warningTemp.setText(currentWarningTemp + "°C");
         temporaryWarningTemp = currentWarningTemp;
+
 
         currentWarningHum = serviceViewModel.getHumWarning();
         tv_warningHum.setText(currentWarningHum + "%");
@@ -124,65 +128,23 @@ public class MonitoringFragment extends Fragment {
         return v;
     }
 
-    private void setTemperatureOverflowActions(float currentWarningTemp, float floatTemp) {
+
+    private void setTemperatureOverflowActions(float currentWarningTemp, float floatTemp){
         if (currentWarningTemp < floatTemp) {
-            tv_temperature.setTextColor(Color.parseColor("#FF0000"));
-
-            temperatureNotification = new NotificationCompat.Builder(requireContext(), TEMPERATURE_CHANNEL_ID)
-                    .setContentTitle("TEMPERATURE WARNING!")
-                    .setContentText("Temperature is over " + currentWarningTemp + "!")
-                    .setSmallIcon(R.drawable.ic_flame)
-                    .setPriority(NotificationCompat.PRIORITY_HIGH)
-                    .build();
-
-            notificationManagerCompat.notify(TEMPERATURE_NOTIFICATION_ID, temperatureNotification);
+            tv_temperature.setTextColor(Color.parseColor("#FF950000"));
         }
         else {
             tv_temperature.setTextColor(Color.parseColor("#000000"));
         }
     }
 
-    private void setHumidityOverflowActions(float currentWarningHum, float floatHum) {
+    private void setHumidityOverflowActions(float currentWarningHum, float floatHum){
         if (currentWarningHum < floatHum) {
-            tv_humidity.setTextColor(Color.parseColor("#FF0000"));
-
-            humidityNotification = new NotificationCompat.Builder(requireContext(), HUMIDITY_CHANNEL_ID)
-                    .setContentTitle("HUMIDITY WARNING!")
-                    .setContentText("Humidity is over " + currentWarningHum + "!")
-                    .setSmallIcon(R.drawable.ic_flame)
-                    .setPriority(NotificationCompat.PRIORITY_HIGH)
-                    .build();
-
-            notificationManagerCompat.notify(HUMIDITY_NOTIFICATION_ID, temperatureNotification);
+            tv_humidity.setTextColor(Color.parseColor("#FF950000"));
         }
         else {
             tv_humidity.setTextColor(Color.parseColor("#000000"));
         }
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        Log.d(TAG, "onPause: App is in the background");
-    }
-
-    private void init(View v) {
-        tv_temperature = v.findViewById(R.id.tv_temperature);
-        tv_humidity = v.findViewById(R.id.tv_humidity);
-
-        tv_warningTemp = v.findViewById(R.id.tv_warning_temp);
-        tv_warningHum = v.findViewById(R.id.tv_warning_humidity);
-
-        btn_increaseWarningTemp = v.findViewById(R.id.btn_increase_warning_temp);
-        btn_decreaseWarningTemp = v.findViewById(R.id.btn_decrease_warning_temp);
-        btn_increaseWarningHum = v.findViewById(R.id.btn_increase_warning_hum);
-        btn_decreaseWarningHum = v.findViewById(R.id.btn_decrease_warning_hum);
-
-        btn_saveWarningTemp = v.findViewById(R.id.btn_save_warning_temp);
-        btn_saveWarningHum = v.findViewById(R.id.btn_save_warning_hum);
-
-        setWarningTempListeners();
-        setWarningHumListeners();
     }
 
     @SuppressLint("SetTextI18n")
@@ -233,37 +195,51 @@ public class MonitoringFragment extends Fragment {
         });
     }
 
-    private void createTemperatureNotificationChannel() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel channel = new NotificationChannel(
-                    TEMPERATURE_CHANNEL_ID,
-                    TEMPERATURE_CHANNEL_NAME,
-                    NotificationManager.IMPORTANCE_DEFAULT
-            );
-            channel.setLightColor(Color.RED);
-            channel.enableLights(true);
 
-            NotificationManager manager = (NotificationManager) requireActivity()
-                    .getSystemService(Context.NOTIFICATION_SERVICE);
-            manager.createNotificationChannel(channel);
+    private void init(View v) {
+        tv_temperature = v.findViewById(R.id.tv_temperature);
+        tv_humidity = v.findViewById(R.id.tv_humidity);
 
-        }
+        tv_warningTemp = v.findViewById(R.id.tv_warning_temp);
+        tv_warningHum = v.findViewById(R.id.tv_warning_humidity);
+
+        btn_increaseWarningTemp = v.findViewById(R.id.btn_increase_warning_temp);
+        btn_decreaseWarningTemp = v.findViewById(R.id.btn_decrease_warning_temp);
+        btn_increaseWarningHum = v.findViewById(R.id.btn_increase_warning_hum);
+        btn_decreaseWarningHum = v.findViewById(R.id.btn_decrease_warning_hum);
+        btn_setTempWarningType = v.findViewById(R.id.btn_set_temperature_warning_type);
+        btn_setHumWarningType = v.findViewById(R.id.btn_set_humidity_warning_type);
+
+        btn_saveWarningTemp = v.findViewById(R.id.btn_save_warning_temp);
+        btn_saveWarningHum = v.findViewById(R.id.btn_save_warning_hum);
+
+        setWarningTempListeners();
+        setWarningHumListeners();
+
+        Button btn_temperatureOverflows = v.findViewById(R.id.btn_display_temp_overflows);
+        btn_temperatureOverflows.setOnClickListener(button -> {
+            NavDirections action = MonitoringFragmentDirections
+                    .actionMonitoringFragmentToWarningTemperaturesFragment2();
+
+            Navigation
+                    .findNavController(v)
+                    .navigate(action);
+        });
+
+        Button btn_humidityOverflows = v.findViewById(R.id.btn_display_hum_overflows);
+        btn_humidityOverflows.setOnClickListener(button -> {
+            NavDirections action = MonitoringFragmentDirections
+                    .actionMonitoringFragmentToWarningHumiditiesFragment2();
+
+            Navigation
+                    .findNavController(v)
+                    .navigate(action);
+        });
     }
 
-    private void createHumidityNotificationChannel() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel channel = new NotificationChannel(
-                    HUMIDITY_CHANNEL_ID,
-                    HUMIDITY_CHANNEL_NAME,
-                    NotificationManager.IMPORTANCE_DEFAULT
-            );
-            channel.setLightColor(Color.RED);
-            channel.enableLights(true);
 
-            NotificationManager manager = (NotificationManager) requireActivity()
-                    .getSystemService(Context.NOTIFICATION_SERVICE);
-            manager.createNotificationChannel(channel);
 
-        }
-    }
+
+
+
 }
